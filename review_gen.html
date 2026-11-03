@@ -48,8 +48,11 @@
     </div>
 
     <script>
-        // Update these two URLs to match your deployment & Google Maps link
-        const BACKEND_URL = "https://review-gen-g6cw.onrender.com/generate-review";
+        // Local files cannot use a relative API path, so send them to the deployed API.
+        // When served by FastAPI (locally or on Render), use the same origin.
+        const BACKEND_URL = window.location.protocol === "file:"
+            ? "https://review-gen-g6cw.onrender.com/generate-review"
+            : "/generate-review";
         const REDIRECT_URL = "https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID";
 
         // Option datasets
@@ -153,13 +156,16 @@
                     })
                 });
 
-                if (!response.ok) throw new Error("Backend request failed");
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || `Backend request failed (${response.status})`);
+                }
 
                 const data = await response.json();
                 document.getElementById('reviewText').value = data.review;
                 document.getElementById('outputSection').classList.remove('hidden');
             } catch (error) {
-                alert("Failed to generate review. Please verify your Render service is running.");
+                alert(`Failed to generate review: ${error.message}`);
                 console.error(error);
             } finally {
                 btn.innerText = "Generate Review";

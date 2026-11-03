@@ -1,7 +1,10 @@
+from pathlib import Path
+
 import os
 import httpx
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -26,7 +29,7 @@ class ReviewData(BaseModel):
 
 @app.get("/")
 async def root():
-    return {"message": "Clinic Review API is running!"}
+    return FileResponse(Path(__file__).with_name("review_gen.html"))
 
 @app.post("/generate-review")
 async def generate_review(data: ReviewData):
