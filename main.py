@@ -1,49 +1,100 @@
+from pathlib import Path
+import os
+
+import httpx
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
-from dotenv import load_dotenv
-import os
-import httpx
 
-# Load the secret key from the .env file
 load_dotenv()
-API_KEY = os.getenv("API_KEY")
+API_KEY = os.getenv("API_KEY", "").strip()
+AI_API_URL = os.getenv("AI_API_URL", "").strip()
 
 app = FastAPI()
 
-# Allow your frontend to communicate with this backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 class ReviewData(BaseModel):
     treatment: str
     doctor: str
     experience: list[str]
+
+
 @app.get("/")
 async def root():
-    return {"message": "Clinic Review API is running!"}
+    return FileResponse(Path(__file__).with_name("review_gen.html"))
+
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
+
 @app.post("/generate-review")
 async def generate_review(data: ReviewData):
     if not API_KEY:
-        raise HTTPException(status_code=500, detail="API key not configured")
-    
-    # Construct your prompt
-    prompt = f"Write a clinic review. Treatment: {data.treatment}. Doctor: {data.doctor}. Experience: {', '.join(data.experience)}."
-    
-    # Securely call your AI API from the backend
-    # Example using a generic POST request structure
-    async with httpx.AsyncClient() as client:
-        try:
+        raise HTTPException(status_code=503, detail="API_KEY is not configured")
+    if not AI_API_URL.startswith(("http://", "https://")):
+        raise HTTPException(
+            status_code=503,
+            detail="AI_API_URL must be configured with an http:// or https:// URL",
+        )
+
+    prompt = (
+        f"Write a clinic review. Treatment: {data.treatment}. "
+        f"Doctor: {data.doctor}. Experience: {', '.join(data.experience)}."
+    )
+
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
-                "YOUR_AI_API_ENDPOINT_HERE",
+                AI_API_URL,
                 headers={"Authorization": f"Bearer {API_KEY}"},
-                json={"prompt": prompt} # Adjust payload to match your specific AI provider
+                json={"prompt": prompt},
             )
             response.raise_for_status()
-            return {"review": response.json()["generated_text"]}
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+    except httpx.HTTPStatusError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"AI service returned HTTP {exc.response.status_code}",
+        ) from exc
+    except httpx.RequestError as exc:
+        raise HTTPException(status_code=502, detail="Unable to reach AI service") from exc
+
+    try:
+        result = response.json()
+    except ValueError as exc:
+        raise HTTPException(status_code=502, detail="AI service returned invalid JSON") from exc
+
+    if isinstance(result, list) and result and isinstance(result[0], dict):
+        result = result[0]
+    if not isinstance(result, dict):
+        raise HTTPException(status_code=502, detail="AI service returned an unsupported JSON response")
+
+    review = result.get("generated_text") or result.get("text")
+    if not review and isinstance(result.get("choices"), list) and result["choices"]:
+        choice = result["choices"][0]
+        if isinstance(choice, dict):
+            message = choice.get("message", {})
+        else:
+            message = {}
+        if isinstance(message, dict):
+            review = message.get("content")
+    if not isinstance(review, str) or not review.strip():
+        raise HTTPException(
+            status_code=502,
+            detail=(
+                "AI service response did not contain generated_text, text, "
+                "or choices[0].message.content"
+            ),
+        )
+
+    return {"review": review.strip()}
