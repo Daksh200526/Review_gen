@@ -1,100 +1,69 @@
-from pathlib import Path
 import os
-
 import httpx
-from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
 from pydantic import BaseModel
+from dotenv import load_dotenv
 
 load_dotenv()
-API_KEY = os.getenv("API_KEY", "").strip()
-AI_API_URL = os.getenv("AI_API_URL", "").strip()
+API_KEY = os.getenv("API_KEY")
 
 app = FastAPI()
 
+# Allow frontend requests from any origin (Render, Netlify, localhost)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 
 class ReviewData(BaseModel):
     treatment: str
     doctor: str
     experience: list[str]
 
-
 @app.get("/")
 async def root():
-    return FileResponse(Path(__file__).with_name("review_gen.html"))
-
-
-@app.get("/health")
-async def health():
-    return {"status": "ok"}
-
+    return {"message": "Clinic Review API is running!"}
 
 @app.post("/generate-review")
 async def generate_review(data: ReviewData):
     if not API_KEY:
-        raise HTTPException(status_code=503, detail="API_KEY is not configured")
-    if not AI_API_URL.startswith(("http://", "https://")):
-        raise HTTPException(
-            status_code=503,
-            detail="AI_API_URL must be configured with an http:// or https:// URL",
-        )
+        raise HTTPException(status_code=500, detail="API key is missing on the server.")
 
+    # Tailored prompt instructing Gemini to write a natural, genuine 2-3 sentence patient review
     prompt = (
-        f"Write a clinic review. Treatment: {data.treatment}. "
-        f"Doctor: {data.doctor}. Experience: {', '.join(data.experience)}."
+        f"Write a genuine, positive, and natural first-person Google review for a dental/medical clinic. "
+        f"The patient underwent {data.treatment} with {data.doctor}. "
+        f"Key positive aspects they experienced: {', '.join(data.experience)}. "
+        f"Keep it under 3-4 sentences. Do not use quotation marks, placeholders, or preamble; provide only the review text."
     )
+
+    gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
+    payload = {
+        "contents": [
+            {
+                "parts": [{"text": prompt}]
+            }
+        ]
+    }
 
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.post(
-                AI_API_URL,
-                headers={"Authorization": f"Bearer {API_KEY}"},
-                json={"prompt": prompt},
-            )
+            response = await client.post(gemini_url, json=payload)
             response.raise_for_status()
-    except httpx.HTTPStatusError as exc:
-        raise HTTPException(
-            status_code=502,
-            detail=f"AI service returned HTTP {exc.response.status_code}",
-        ) from exc
-    except httpx.RequestError as exc:
-        raise HTTPException(status_code=502, detail="Unable to reach AI service") from exc
+            res_data = response.json()
 
-    try:
-        result = response.json()
-    except ValueError as exc:
-        raise HTTPException(status_code=502, detail="AI service returned invalid JSON") from exc
+            # Extract generated review from Gemini's response schema
+            generated_text = res_data["candidates"][0]["content"]["parts"][0]["text"].strip()
+            return {"review": generated_text}
 
-    if isinstance(result, list) and result and isinstance(result[0], dict):
-        result = result[0]
-    if not isinstance(result, dict):
-        raise HTTPException(status_code=502, detail="AI service returned an unsupported JSON response")
-
-    review = result.get("generated_text") or result.get("text")
-    if not review and isinstance(result.get("choices"), list) and result["choices"]:
-        choice = result["choices"][0]
-        if isinstance(choice, dict):
-            message = choice.get("message", {})
-        else:
-            message = {}
-        if isinstance(message, dict):
-            review = message.get("content")
-    if not isinstance(review, str) or not review.strip():
-        raise HTTPException(
-            status_code=502,
-            detail=(
-                "AI service response did not contain generated_text, text, "
-                "or choices[0].message.content"
-            ),
-        )
-
-    return {"review": review.strip()}
+    except httpx.HTTPStatusError as e:
+        error_details = e.response.text
+        print(f"Gemini API Error: {error_details}")
+        raise HTTPException(status_code=e.response.status_code, detail=f"Gemini API error: {error_details}")
+    except Exception as e:
+        print(f"Server Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
