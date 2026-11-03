@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic Review Generator</title>
+    <!-- Tailwind CSS for clean, efficient styling without external files -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen p-4 md:p-8 flex items-center justify-center">
+    <div class="max-w-2xl w-full bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-gray-100">
+        <h1 class="text-2xl font-bold mb-6 text-center text-blue-600">Share Your Experience</h1>
+        
+        <!-- Q1: Treatment (Single Choice) -->
+        <div class="mb-6">
+            <h2 class="text-lg font-semibold mb-3">1. What treatment did you take?</h2>
+            <div class="grid grid-cols-2 gap-3">
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="treatment" value="General Checkup" class="w-4 h-4 text-blue-600"> General Checkup</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="treatment" value="Root Canal" class="w-4 h-4 text-blue-600"> Root Canal</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="treatment" value="Teeth Whitening" class="w-4 h-4 text-blue-600"> Teeth Whitening</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="treatment" value="Dental Implants" class="w-4 h-4 text-blue-600"> Dental Implants</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="treatment" value="Orthodontics" class="w-4 h-4 text-blue-600"> Orthodontics</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="treatment" value="Tooth Extraction" class="w-4 h-4 text-blue-600"> Tooth Extraction</label>
+            </div>
+        </div>
+
+        <!-- Q2: Doctor (Single Choice) -->
+        <div class="mb-6">
+            <h2 class="text-lg font-semibold mb-3">2. Which doctor did you consult?</h2>
+            <div class="grid grid-cols-2 gap-3">
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="doctor" value="Dr. Sharma" class="w-4 h-4 text-blue-600"> Dr. Sharma</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="doctor" value="Dr. Patel" class="w-4 h-4 text-blue-600"> Dr. Patel</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="doctor" value="Dr. Reddy" class="w-4 h-4 text-blue-600"> Dr. Reddy</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="doctor" value="Dr. Iyer" class="w-4 h-4 text-blue-600"> Dr. Iyer</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="doctor" value="Dr. Singh" class="w-4 h-4 text-blue-600"> Dr. Singh</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="radio" name="doctor" value="Dr. Rao" class="w-4 h-4 text-blue-600"> Dr. Rao</label>
+            </div>
+        </div>
+
+        <!-- Q3: Experience (Multiple Choice) -->
+        <div class="mb-8">
+            <h2 class="text-lg font-semibold mb-3">3. How was your experience? (Select all that apply)</h2>
+            <div class="grid grid-cols-2 gap-3">
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="checkbox" name="experience" value="Painless treatment" class="w-4 h-4 text-blue-600 rounded"> Painless treatment</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="checkbox" name="experience" value="Friendly staff" class="w-4 h-4 text-blue-600 rounded"> Friendly staff</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="checkbox" name="experience" value="Short wait time" class="w-4 h-4 text-blue-600 rounded"> Short wait time</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="checkbox" name="experience" value="Clean environment" class="w-4 h-4 text-blue-600 rounded"> Clean environment</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="checkbox" name="experience" value="Clear explanations" class="w-4 h-4 text-blue-600 rounded"> Clear explanations</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="checkbox" name="experience" value="Affordable pricing" class="w-4 h-4 text-blue-600 rounded"> Affordable pricing</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="checkbox" name="experience" value="Gentle approach" class="w-4 h-4 text-blue-600 rounded"> Gentle approach</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="checkbox" name="experience" value="Modern equipment" class="w-4 h-4 text-blue-600 rounded"> Modern equipment</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="checkbox" name="experience" value="Great follow-up" class="w-4 h-4 text-blue-600 rounded"> Great follow-up</label>
+                <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-blue-50 transition"><input type="checkbox" name="experience" value="Highly recommended" class="w-4 h-4 text-blue-600 rounded"> Highly recommended</label>
+            </div>
+        </div>
+
+        <!-- Action Button -->
+        <button id="generateBtn" onclick="generateReview()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition shadow-md">
+            Generate Review
+        </button>
+
+        <!-- Dynamic Output Section -->
+        <div id="outputSection" class="hidden mt-6">
+            <textarea id="reviewText" class="w-full h-32 p-4 border rounded-xl mb-4 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-gray-700 shadow-inner" placeholder="Your review will appear here..."></textarea>
+            
+            <button onclick="copyAndRedirect()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl transition shadow-md flex justify-center items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                Copy and Redirect
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 1. UPDATE THIS to your backend domain when deploying to Render
+        const BACKEND_URL = "http://127.0.0.1:8000/generate-review";
+        
+        // 2. UPDATE THIS to the Google Maps/Practo review link
+        const REDIRECT_URL = "https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID";
+
+        async function generateReview() {
+            const treatment = document.querySelector('input[name="treatment"]:checked');
+            const doctor = document.querySelector('input[name="doctor"]:checked');
+            const experiences = Array.from(document.querySelectorAll('input[name="experience"]:checked')).map(cb => cb.value);
+
+            if (!treatment || !doctor || experiences.length === 0) {
+                alert("Please select a treatment, a doctor, and at least one experience before generating.");
+                return;
+            }
+
+            const btn = document.getElementById('generateBtn');
+            btn.innerText = "Generating...";
+            btn.disabled = true;
+            btn.classList.add("opacity-75", "cursor-not-allowed");
+
+            try {
+                const response = await fetch(BACKEND_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        treatment: treatment.value,
+                        doctor: doctor.value,
+                        experience: experiences
+                    })
+                });
+
+                if (!response.ok) throw new Error("Failed to generate review");
+
+                const data = await response.json();
+                
+                // Show the output textarea and buttons
+                document.getElementById('reviewText').value = data.review;
+                document.getElementById('outputSection').classList.remove('hidden');
+                
+            } catch (error) {
+                alert("Error generating review. Ensure your FastAPI backend is running.");
+                console.error(error);
+            } finally {
+                btn.innerText = "Generate Review";
+                btn.disabled = false;
+                btn.classList.remove("opacity-75", "cursor-not-allowed");
+            }
+        }
+
+        async function copyAndRedirect() {
+            const reviewText = document.getElementById('reviewText').value;
+            if (!reviewText) return;
+
+            try {
+                await navigator.clipboard.writeText(reviewText);
+                // Temporarily update button text for user feedback
+                const btn = event.currentTarget;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = "Copied! Redirecting...";
+                
+                // Redirect after a 1-second delay so the user realizes it was copied
+                setTimeout(() => {
+                    window.open(REDIRECT_URL, "_blank");
+                    btn.innerHTML = originalText; 
+                }, 1000);
+            } catch (err) {
+                alert("Clipboard access denied. Please copy the text manually.");
+            }
+        }
+    </script>
+</body>
+</html>
