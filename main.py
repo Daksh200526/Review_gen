@@ -44,7 +44,7 @@ async def generate_review(data: ReviewData):
         f"Keep it under 3-4 sentences. Do not use quotation marks, placeholders, or preamble; provide only the review text."
     )
 
-    gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key={API_KEY}"
+    gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key={API_KEY}"
     payload = {
         "contents": [
             {
