@@ -23,7 +23,9 @@ class ReviewData(BaseModel):
     treatment: str
     doctor: str
     experience: list[str]
-
+@app.get("/")
+async def root():
+    return {"message": "Clinic Review API is running!"}
 @app.post("/generate-review")
 async def generate_review(data: ReviewData):
     if not API_KEY:
