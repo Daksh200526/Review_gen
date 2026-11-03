@@ -36,6 +36,7 @@ async def generate_review(data: ReviewData):
     if not API_KEY:
         raise HTTPException(status_code=500, detail="API key is missing on the server.")
 
+    # Tailored prompt instructing Gemini to write a natural, genuine 2-3 sentence patient review
     prompt = (
         f"Write a genuine, positive, and natural first-person Google review for a dental/medical clinic. "
         f"The patient underwent {data.treatment} with {data.doctor}. "
@@ -43,29 +44,29 @@ async def generate_review(data: ReviewData):
         f"Keep it under 3-4 sentences. Do not use quotation marks, placeholders, or preamble; provide only the review text."
     )
 
+    gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={API_KEY}"
     payload = {
-        "contents": [{"parts": [{"text": prompt}]}]
+        "contents": [
+            {
+                "parts": [{"text": prompt}]
+            }
+        ]
     }
 
-    # Sequence of models to try in order
-    models = ["gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-1.5-flash"]
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(gemini_url, json=payload)
+            response.raise_for_status()
+            res_data = response.json()
 
-    async with httpx.AsyncClient(timeout=30.0) as client:
-        last_error = ""
-        for model in models:
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={API_KEY}"
-            try:
-                response = await client.post(url, json=payload)
-                if response.status_code == 200:
-                    res_data = response.json()
-                    review_text = res_data["candidates"][0]["content"]["parts"][0]["text"].strip()
-                    return {"review": review_text}
-                else:
-                    last_error = f"{model} returned {response.status_code}: {response.text}"
-                    print(f"Model failed: {last_error}")
-            except Exception as e:
-                last_error = f"{model} error: {str(e)}"
-                print(last_error)
+            # Extract generated review from Gemini's response schema
+            generated_text = res_data["candidates"][0]["content"]["parts"][0]["text"].strip()
+            return {"review": generated_text}
 
-        # If all fail, throw the exact detail
-        raise HTTPException(status_code=500, detail=f"All models failed. Last detail: {last_error}")
+    except httpx.HTTPStatusError as e:
+        error_details = e.response.text
+        print(f"Gemini API Error: {error_details}")
+        raise HTTPException(status_code=e.response.status_code, detail=f"Gemini API error: {error_details}")
+    except Exception as e:
+        print(f"Server Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
