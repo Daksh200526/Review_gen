@@ -34,7 +34,7 @@ async def root():
 @app.post("/generate-review")
 async def generate_review(data: ReviewData):
     if not API_KEY:
-        raise HTTPException(status_code=503, detail="OpenAI API key is not configured on the server.")
+        raise HTTPException(status_code=503, detail="Gemini API key is not configured on the server.")
 
     prompt = (
         f"Write a genuine, positive, and natural first-person Google review for a clinic. "
@@ -43,40 +43,26 @@ async def generate_review(data: ReviewData):
         f"Keep it under 3-4 sentences. Do not use quotation marks, placeholders, or preamble; provide only the review text."
     )
 
-    url = "https://api.openai.com/v1/chat/completions"
-    headers = {"Authorization": f"Bearer {API_KEY}"}
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={API_KEY}"
     payload = {
-        "model": "gpt-4o-mini",
-        "messages": [
-            {"role": "system", "content": "You write short, natural Google reviews for clinic patients."},
-            {"role": "user", "content": prompt}
-        ],
-        "temperature": 0.7,
-        "max_tokens": 150
+        "contents": [
+            {
+                "parts": [{"text": prompt}]
+            }
+        ]
     }
 
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            response = await client.post(url, headers=headers, json=payload)
+        async with httpx.AsyncClient(timeout=20.0) as client:
+            response = await client.post(url, json=payload)
             response.raise_for_status()
             res_data = response.json()
-    except httpx.HTTPStatusError as exc:
-        try:
-            error_message = exc.response.json().get("error", {}).get("message")
-        except ValueError:
-            error_message = None
-        detail = f"OpenAI returned HTTP {exc.response.status_code}"
-        if error_message:
-            detail = f"{detail}: {error_message}"
-        raise HTTPException(status_code=502, detail=detail) from exc
-    except httpx.RequestError as exc:
-        raise HTTPException(status_code=502, detail="Could not connect to OpenAI.") from exc
-
-    try:
-        review_text = res_data["choices"][0]["message"]["content"]
-    except (KeyError, IndexError, TypeError) as exc:
-        raise HTTPException(status_code=502, detail="OpenAI returned an unexpected response.") from exc
-    if not isinstance(review_text, str) or not review_text.strip():
-        raise HTTPException(status_code=502, detail="OpenAI returned an empty review.")
-
-    return {"review": review_text.strip()}
+            review_text = res_data["candidates"][0]["content"]["parts"][0]["text"].strip()
+            return {"review": review_text}
+    except httpx.HTTPStatusError as e:
+        error_details = e.response.text
+        print(f"Gemini API Error: {error_details}")
+        raise HTTPException(status_code=e.response.status_code, detail=f"Gemini API error: {error_details}")
+    except Exception as e:
+        print(f"Server Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
