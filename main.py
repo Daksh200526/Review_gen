@@ -1,19 +1,22 @@
+from pathlib import Path
+
 import os
 import httpx
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
 load_dotenv()
-API_KEY = os.getenv("API_KEY")
+API_KEY = os.getenv("API_KEY", "").strip()
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -25,12 +28,13 @@ class ReviewData(BaseModel):
 
 @app.get("/")
 async def root():
-    return {"message": "Clinic Review API is running!"}
+    return FileResponse(Path(__file__).with_name("review_gen.html"))
+
 
 @app.post("/generate-review")
 async def generate_review(data: ReviewData):
     if not API_KEY:
-        raise HTTPException(status_code=500, detail="API key is missing on the server.")
+        raise HTTPException(status_code=503, detail="OpenAI API key is not configured on the server.")
 
     prompt = (
         f"Write a genuine, positive, and natural first-person Google review for a clinic. "
@@ -40,10 +44,7 @@ async def generate_review(data: ReviewData):
     )
 
     url = "https://api.openai.com/v1/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json"
-    }
+    headers = {"Authorization": f"Bearer {API_KEY}"}
     payload = {
         "model": "gpt-4o-mini",
         "messages": [
@@ -55,16 +56,27 @@ async def generate_review(data: ReviewData):
     }
 
     try:
-        async with httpx.AsyncClient(timeout=20.0) as client:
+        async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(url, headers=headers, json=payload)
             response.raise_for_status()
             res_data = response.json()
-            review_text = res_data["choices"][0]["message"]["content"].strip()
-            return {"review": review_text}
-    except httpx.HTTPStatusError as e:
-        error_details = e.response.text
-        print(f"OpenAI API Error: {error_details}")
-        raise HTTPException(status_code=e.response.status_code, detail=f"OpenAI API error: {error_details}")
-    except Exception as e:
-        print(f"Server Error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+    except httpx.HTTPStatusError as exc:
+        try:
+            error_message = exc.response.json().get("error", {}).get("message")
+        except ValueError:
+            error_message = None
+        detail = f"OpenAI returned HTTP {exc.response.status_code}"
+        if error_message:
+            detail = f"{detail}: {error_message}"
+        raise HTTPException(status_code=502, detail=detail) from exc
+    except httpx.RequestError as exc:
+        raise HTTPException(status_code=502, detail="Could not connect to OpenAI.") from exc
+
+    try:
+        review_text = res_data["choices"][0]["message"]["content"]
+    except (KeyError, IndexError, TypeError) as exc:
+        raise HTTPException(status_code=502, detail="OpenAI returned an unexpected response.") from exc
+    if not isinstance(review_text, str) or not review_text.strip():
+        raise HTTPException(status_code=502, detail="OpenAI returned an empty review.")
+
+    return {"review": review_text.strip()}
