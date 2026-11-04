@@ -31,7 +31,7 @@
 
         <!-- Action Button -->
         <button id="generateBtn" onclick="generateReview()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition shadow-md">
-            Generate and redirect
+            Generate Review
         </button>
 
         <!-- Dynamic Output Section -->
@@ -53,7 +53,7 @@
         const BACKEND_URL = window.location.protocol === "file:"
             ? "https://review-gen-g6cw.onrender.com/generate-review"
             : "/generate-review";
-        const REDIRECT_URL = "https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID";
+        const REDIRECT_URL = "https://share.google/E7oSDf65O4AwMDyOp";
 
         // Option datasets
         const treatments = [
@@ -175,21 +175,66 @@
         }
 
         async function copyAndRedirect(event) {
-            const reviewText = document.getElementById('reviewText').value;
+            const reviewText = document.getElementById('reviewText').value.trim();
             if (!reviewText) return;
 
+            const btn = event.currentTarget;
+            btn.disabled = true;
+            btn.innerText = "Copying...";
+
+            let clipboardWrite;
             try {
-                await navigator.clipboard.writeText(reviewText);
-                const btn = event.currentTarget;
-                const originalText = btn.innerHTML;
-                btn.innerHTML = "Copied! Redirecting...";
-                
-                setTimeout(() => {
-                    window.open(REDIRECT_URL, "_blank");
-                    btn.innerHTML = originalText;
-                }, 1000);
-            } catch (err) {
-                alert("Clipboard copy failed. Please copy the text manually.");
+                if (navigator.clipboard && window.isSecureContext) {
+                    clipboardWrite = navigator.clipboard.writeText(reviewText);
+                }
+            } catch (error) {
+                console.error("Clipboard API failed:", error);
+            }
+
+            let fallbackCopied = false;
+            try {
+                fallbackCopied = copyTextFallback(reviewText);
+            } catch (error) {
+                console.error("Clipboard fallback failed:", error);
+            }
+
+            if (clipboardWrite) {
+                try {
+                    await clipboardWrite;
+                } catch (error) {
+                    if (!fallbackCopied) {
+                        console.error("Clipboard API failed:", error);
+                        alert("Could not copy the review. Please copy it manually, then try again.");
+                        btn.disabled = false;
+                        btn.innerText = "Copy and Redirect";
+                        return;
+                    }
+                }
+            } else if (!fallbackCopied) {
+                alert("Could not copy the review. Please copy it manually, then try again.");
+                btn.disabled = false;
+                btn.innerText = "Copy and Redirect";
+                return;
+            }
+
+            btn.innerText = "Copied! Redirecting...";
+            window.location.assign(REDIRECT_URL);
+        }
+
+        function copyTextFallback(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.setAttribute("readonly", "");
+            textArea.style.position = "fixed";
+            textArea.style.opacity = "0";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                return document.execCommand("copy");
+            } finally {
+                textArea.remove();
             }
         }
     </script>
