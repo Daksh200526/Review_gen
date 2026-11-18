@@ -37,10 +37,15 @@ async def generate_review(data: ReviewData):
         raise HTTPException(status_code=503, detail="OpenAI API key is not configured on the server.")
 
     prompt = (
-        f"Write a genuine, positive, and natural first-person Google review for a clinic. "
-        f"The patient underwent {data.treatment} with {data.doctor}. "
-        f"Key positive aspects they experienced: {', '.join(data.experience)}. "
-        f"Keep it under 3-4 sentences. Do not use quotation marks, placeholders, or preamble; provide only the review text."
+        "Draft a short first-person review in a warm, conversational voice, based only on the patient's answers. "
+        f"They had {data.treatment} with {data.doctor}. "
+        f"They selected these parts of their experience: {', '.join(data.experience)}. "
+        "Sound like a real person sharing a straightforward personal impression: use everyday wording, "
+        "a natural rhythm, and vary the phrasing and sentence structure between reviews. "
+        "Do not invent events, outcomes, feelings, or details that were not provided, and avoid generic promotional claims. "
+        "Use correct, readable grammar; do not add deliberate mistakes. "
+        "Write 2 to 4 concise sentences. Do not use quotation marks, placeholders, or a preamble; provide only the review text."
+        "Mention the clinic location Vasanth Nagar to be placed in reviews and the way it is placed in the review should be very natural, realistic, highly trustworthy and should not feel forced. "
     )
 
     url = "https://api.openai.com/v1/chat/completions"
@@ -48,7 +53,7 @@ async def generate_review(data: ReviewData):
     payload = {
         "model": "gpt-4o-mini",
         "messages": [
-            {"role": "system", "content": "You write short, natural Google reviews for clinic patients."},
+            {"role": "system", "content": "You help people express their own clinic experiences clearly and naturally. Keep every review grounded in the details they supplied."},
             {"role": "user", "content": prompt}
         ],
         "temperature": 0.7,
