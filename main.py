@@ -43,7 +43,7 @@ async def generate_review(data: ReviewData):
         "Sound like a real person sharing a straightforward personal impression: use everyday wording, "
         "a natural rhythm, and vary the phrasing and sentence structure between reviews. "
         "Do not invent events, outcomes, feelings, or details that were not provided, and avoid generic promotional claims. "
-        "Use correct, readable grammar; do not add deliberate mistakes. "
+        "Use correct, readable grammar, don't use high-end English, use simple relatable language; do not add deliberate mistakes. "
         "Write 2 to 4 concise sentences. Do not use quotation marks, placeholders, or a preamble; provide only the review text."
         "Mention the clinic location Vasanth Nagar to be placed in reviews and the way it is placed in the review should be very natural, realistic, highly trustworthy and should not feel forced. "
     )
