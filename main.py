@@ -38,12 +38,14 @@ async def generate_review(data: ReviewData):
 
     prompt = (
         "Write a short, first-person review that sounds like an ordinary person speaking naturally. "
-        f"The patient had {data.treatment} with {data.doctor} at Beyond Dental in Vasanth Nagar. "
+        "Make this review feel fresh: vary its opening, sentence structure, and phrasing each time. Do not use a fixed template or stock review phrases. "
+        "Keep the wording casual and straightforward, not overly polished, while still clear and readable. "
+        f"The patient had {data.treatment} with dentist {data.doctor} at Beyond Dental in Vasanth Nagar. "
         f"The patient chose these experience points: {', '.join(data.experience)}. "
         "Use plain, everyday English and short, clear sentences. Keep the tone warm and honest, like a simple message to a friend. "
-        "Avoid slang, fancy or formal words, idioms, marketing language, exaggerated praise, and generic filler. "
+        "Avoid slang, fancy or formal words, idioms, marketing language, exaggerated praise, generic filler, and overly polished wording. "
         "Only mention details supported by the treatment, doctor, and selected experience points. Do not invent events, results, feelings, or claims. "
-        "Mention the term dentist before the doctor name in the reviews, and mention Vasanth Nagar only if it fits naturally. "
+        "Include Vasanth Nagar in every review in a natural, unforced way. Mention the dentist by name naturally. "
         "Write 2 or 3 concise sentences. Do not use quotation marks, a heading, or a preamble; return only the review."
     )
 
