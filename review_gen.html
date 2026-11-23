@@ -1,371 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clinic Review Generator</title>
-    <!-- Tailwind CSS for modern, responsive card UI -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .option-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 0.5rem;
-        }
-
-        .option-card {
-            display: flex;
-            min-width: 0;
-            min-height: 2.5rem;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 0.625rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.625rem;
-            background: #fff;
-            color: #1f2937;
-            cursor: pointer;
-            transition: background-color 150ms, border-color 150ms, color 150ms;
-        }
-
-        .option-card:hover {
-            border-color: #93c5fd;
-            background: #eff6ff;
-        }
-
-        .option-card:has(input:checked) {
-            border-color: #2563eb;
-            background: #eff6ff;
-            color: #1d4ed8;
-        }
-
-        .option-card:has(input:focus-visible) {
-            outline: 2px solid #60a5fa;
-            outline-offset: 2px;
-        }
-
-        .option-input {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            clip-path: inset(50%);
-        }
-
-        .option-indicator {
-            display: grid;
-            width: 1rem;
-            height: 1rem;
-            flex: 0 0 1rem;
-            place-items: center;
-            border: 1.5px solid #9ca3af;
-            background: #fff;
-        }
-
-        .option-radio {
-            border-radius: 50%;
-        }
-
-        .option-radio::after {
-            width: 0.45rem;
-            height: 0.45rem;
-            border-radius: 50%;
-            background: #fff;
-            content: "";
-            transform: scale(0);
-            transition: transform 150ms;
-        }
-
-        .option-input:checked + .option-radio {
-            border-color: #2563eb;
-            background: #2563eb;
-        }
-
-        .option-input:checked + .option-radio::after {
-            transform: scale(1);
-        }
-
-        .option-checkbox {
-            border-radius: 0.25rem;
-        }
-
-        .option-checkbox::after {
-            width: 0.3rem;
-            height: 0.55rem;
-            border: solid #fff;
-            border-width: 0 2px 2px 0;
-            content: "";
-            opacity: 0;
-            transform: rotate(45deg) translate(-1px, -1px);
-        }
-
-        .option-input:checked + .option-checkbox {
-            border-color: #2563eb;
-            background: #2563eb;
-        }
-
-        .option-input:checked + .option-checkbox::after {
-            opacity: 1;
-        }
-
-        .option-label {
-            min-width: 0;
-            font-size: 0.8125rem;
-            line-height: 1.15rem;
-        }
-
-        @media (max-width: 420px) {
-            .option-grid {
-                gap: 0.375rem;
-            }
-
-            .option-card {
-                gap: 0.375rem;
-                padding: 0.375rem;
-            }
-
-            .option-label {
-                font-size: 0.75rem;
-                line-height: 1rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#21100b">
+  <title>Beyond Dental | Share Your Experience</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--ink:#28150e;--brown:#471b05;--paper:#eeece5;--white:#fffefa;--muted:#70685e;--rose:#be596d;--gold:#e47e1e;--line:#ded8cc;--serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',Arial,sans-serif}
+    *{box-sizing:border-box}html{min-height:100%;background:#1d1c1a}body{margin:0;min-height:100vh;background:var(--paper);color:var(--ink);font-family:var(--serif);-webkit-font-smoothing:antialiased}
+    .site-header{height:56px;background:#21100b;border-bottom:3px solid #3d261e;display:flex;align-items:center;padding:0 29px;color:#f2eee7}
+    .brand{width:78px;text-align:center;line-height:1}.brand-name{font-family:var(--serif);font-size:9px;font-weight:400;letter-spacing:.04em;white-space:nowrap}.brand-rule{height:1px;background:#81766c;margin:3px 0 2px}.brand-tag{font:3.1px var(--sans);letter-spacing:.13em;white-space:nowrap}
+    main{width:min(100%,440px);min-height:calc(100vh - 56px);margin:0 auto;padding:24px 24px 20px}
+    .intro{margin-bottom:17px}.eyebrow{margin:0 0 4px;color:var(--rose);font:700 10px/1.4 var(--sans);letter-spacing:.16em;text-transform:uppercase}.intro h1{margin:0;font-size:29px;line-height:1.16;letter-spacing:-.055em;font-weight:800}.intro-copy{margin:7px 0 0;color:#655e55;font-size:13px;line-height:1.55}
+    .progress-head{display:flex;justify-content:space-between;align-items:center;margin:0 0 7px;font-size:8px;font-weight:700}.progress-count{font-size:8px;font-weight:500;color:#5d554b}.progress-track{height:5px;border-radius:8px;background:#bcb4a4;overflow:hidden;margin-bottom:19px}.progress-fill{height:100%;width:33.33%;background:var(--ink);border-radius:8px;transition:width .2s}
+    .question{margin:0 0 17px}.question h2{font-size:15px;line-height:1.3;margin:0 0 9px;font-weight:700;letter-spacing:-.035em}.question h2 .number{margin-right:3px}.helper{margin:-5px 0 10px 22px;color:#71695f;font-size:10px}
+    .choice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.choice-grid.doctors{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+    .choice{position:relative;display:flex;align-items:center;min-width:0;min-height:40px;padding:0 10px;border:1px solid var(--line);border-radius:11px;background:var(--white);box-shadow:0 2px 4px #3b28100b;cursor:pointer;gap:8px;transition:.15s ease}
+    .choice input{position:absolute;opacity:0;pointer-events:none}.indicator{width:13px;height:13px;flex:0 0 13px;border:1px solid #d9c9b6;border-radius:50%;background:#fffefa;display:grid;place-items:center}.indicator:after{content:'';width:6px;height:6px;border-radius:50%;background:white;transform:scale(0)}.choice-name{font-size:10px;line-height:1.2;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .choice:has(input:checked){background:var(--brown);border-color:var(--brown);color:#fff}.choice:has(input:checked) .indicator{border:2px solid white;background:transparent}.choice:has(input:checked) .indicator:after{transform:scale(1)}.choice:has(input:focus-visible){outline:2px solid var(--rose);outline-offset:2px}
+    .doctors .choice{height:62px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:5px}.doctor-initials{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#f2eee7;font:700 9px var(--sans);color:#33251c}.doctors .choice-name{font-size:10px}
+    .experiences{display:flex;flex-wrap:wrap;gap:7px 8px;padding:0 3px}.experiences .choice{min-height:32px;padding:0 10px;gap:7px;border-radius:11px}.experiences .indicator{width:12px;height:12px;flex-basis:12px;background:#f5f3ed}.experiences .choice-name{font-size:9px}.experiences .choice:has(input:checked){background:#fbf7ef;color:var(--ink);border-color:#dfc39e}.experiences .choice:has(input:checked) .indicator{background:var(--brown);border-color:var(--brown)}
+    .action-row{display:flex;align-items:center;gap:12px;margin-top:17px}.primary{border:0;background:var(--brown);color:white;border-radius:11px;min-height:42px;padding:0 19px;font:700 14px var(--serif);box-shadow:0 3px 6px #25150f24;cursor:pointer}.primary:hover{background:#5a2509}.primary:disabled{opacity:.65;cursor:wait}.action-note{font-size:8px;color:#5e574f}
+    .result{display:none;padding-top:19px}.result.show{display:block}.form-view.hide{display:none}.result h1{margin:0 0 17px;font-size:28px;line-height:1.15;letter-spacing:-.04em;color:var(--brown)}.summary{position:relative;margin-bottom:19px;padding-right:90px}.summary-row{display:flex;align-items:baseline;gap:10px;margin:0 0 4px}.summary-label{font:700 14px/1.6 var(--sans);letter-spacing:.11em;color:#8b7969}.summary-value{font-size:17px;font-weight:700}.stamp{position:absolute;right:8px;top:-1px;width:78px;height:78px;border:1px dashed var(--rose);border-radius:50%;outline:1px solid var(--rose);outline-offset:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--rose);font:700 9px/1.2 var(--sans);letter-spacing:.1em;transform:rotate(-9deg)}.stamp span:last-child{font-size:12px;letter-spacing:0;margin-top:2px}
+    .selected-tags{display:flex;flex-wrap:wrap;gap:7px 10px;margin:0 0 16px}.tag{border:1px solid #e3c5a7;background:#fbf7ef;border-radius:18px;padding:5px 14px;color:#614934;font-size:11px;font-weight:600;line-height:1.25}
+    .review-card{background:#f9f6ee;border-left:4px solid var(--rose);border-radius:17px;padding:17px 17px 16px 18px;box-shadow:0 2px 4px #33200c0a}.stars{color:var(--gold);font:18px/1 var(--sans);letter-spacing:2px;margin:0 0 12px}.review-copy{margin:0;font-size:14px;line-height:1.8;font-weight:600;color:#34241b}.publish{display:block;width:calc(100% - 36px);height:52px;margin:34px auto 0;border-radius:28px;font-size:18px}
+    @media(min-width:600px){body{padding:0 0 30px}.site-header{height:110px;padding-left:max(calc((100% - 900px)/2),32px)}.brand{width:290px}.brand-name{font-size:32px}.brand-rule{margin:5px 0 7px}.brand-tag{font-size:11px}.brand-rule{height:1px}main{margin-top:22px;min-height:calc(100vh - 132px);border-radius:18px;padding:34px 32px}.intro h1{font-size:36px}.intro-copy{font-size:16px}.eyebrow{font-size:12px}.choice-name{font-size:12px}.question h2{font-size:17px}.choice{min-height:46px}.doctors .choice{height:72px}.experiences .choice-name{font-size:11px}.experiences .choice{min-height:36px}.result h1{font-size:32px}.summary-label{font-size:15px}.summary-value{font-size:18px}.review-copy{font-size:16px}}
+    @media(max-width:360px){main{padding-left:18px;padding-right:18px}.intro h1{font-size:27px}.choice{padding-left:7px;padding-right:7px;gap:6px}.choice-name{font-size:9px}.experiences{gap:6px}.experiences .choice{padding:0 8px}}
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans min-h-screen p-2 sm:p-4 flex items-center justify-center">
-    <div class="max-w-3xl w-full bg-white p-4 sm:p-5 rounded-2xl shadow-lg border border-gray-100">
-        <h1 class="text-2xl font-bold mb-4 text-center text-blue-600">Share Your Experience</h1>
-        
-        <!-- Q1: Treatment (Single Choice) -->
-        <div class="mb-4">
-            <h2 class="text-base font-semibold mb-2">1. What treatment did you take?</h2>
-            <div id="treatments-container" class="option-grid"></div>
-        </div>
-
-        <!-- Q2: Doctor (Single Choice) -->
-        <div class="mb-4">
-            <h2 class="text-base font-semibold mb-2">2. Which doctor did you consult?</h2>
-            <div id="doctors-container" class="option-grid"></div>
-        </div>
-
-        <!-- Q3: Experience (Multiple Choice) -->
-        <div class="mb-5">
-            <h2 class="text-base font-semibold mb-2">3. How was your experience? (Select all that apply)</h2>
-            <div id="experiences-container" class="option-grid"></div>
-        </div>
-
-        <!-- Action Button -->
-        <button id="generateBtn" onclick="generateReview()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition shadow-md">
-            Generate Review
-        </button>
-
-        <!-- Dynamic Output Section -->
-        <div id="outputSection" class="hidden mt-6">
-            <textarea id="reviewText" class="w-full h-32 p-4 border rounded-xl mb-4 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-gray-700 shadow-inner" placeholder="Your review will appear here..."></textarea>
-            
-            <button onclick="copyAndRedirect(event)" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl transition shadow-md flex justify-center items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-                Copy and Redirect
-            </button>
-        </div>
-    </div>
-
-    <script>
-        // Local files cannot use a relative API path, so send them to the deployed API.
-        // When served by FastAPI (locally or on Render), use the same origin.
-        const BACKEND_URL = window.location.protocol === "file:"
-            ? "https://review-gen-g6cw.onrender.com/generate-review"
-            : "/generate-review";
-        const REDIRECT_URL = "https://share.google/E7oSDf65O4AwMDyOp";
-
-        // Option datasets
-        const treatments = [
-            "General Checkup",
-            "Root Canal",
-            "Teeth Whitening",
-            "Dental Implants",
-            "Orthodontics",
-            "Tooth Extraction"
-        ];
-
-        const doctors = [
-            "Dr. Sharma",
-            "Dr. Patel",
-            "Dr. Reddy",
-            "Dr. Iyer",
-            "Dr. Singh",
-            "Dr. Rao"
-        ];
-
-        const experiences = [
-            "Painless treatment",
-            "Friendly staff",
-            "Short wait time",
-            "Clean environment",
-            "Clear explanations",
-            "Affordable pricing",
-            "Gentle approach",
-            "Modern equipment",
-            "Great follow-up",
-            "Highly recommended"
-        ];
-
-        // Fisher-Yates shuffle algorithm
-        function shuffle(array) {
-            const arr = [...array];
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-            return arr;
-        }
-
-        // Render shuffled items into containers on page load
-        function renderOptions() {
-            // Render Shuffled Treatments
-            const treatmentContainer = document.getElementById("treatments-container");
-            treatmentContainer.innerHTML = shuffle(treatments).map(t => `
-                <label class="option-card">
-                    <input type="radio" name="treatment" value="${t}" class="option-input">
-                    <span class="option-indicator option-radio" aria-hidden="true"></span>
-                    <span class="option-label">${t}</span>
-                </label>
-            `).join('');
-
-            // Render Shuffled Doctors
-            const doctorContainer = document.getElementById("doctors-container");
-            doctorContainer.innerHTML = shuffle(doctors).map(d => `
-                <label class="option-card">
-                    <input type="radio" name="doctor" value="${d}" class="option-input">
-                    <span class="option-indicator option-radio" aria-hidden="true"></span>
-                    <span class="option-label">${d}</span>
-                </label>
-            `).join('');
-
-            // Render Shuffled Experiences
-            const expContainer = document.getElementById("experiences-container");
-            expContainer.innerHTML = shuffle(experiences).map(e => `
-                <label class="option-card">
-                    <input type="checkbox" name="experience" value="${e}" class="option-input">
-                    <span class="option-indicator option-checkbox" aria-hidden="true"></span>
-                    <span class="option-label">${e}</span>
-                </label>
-            `).join('');
-        }
-
-        // Trigger shuffle rendering on page load/scan
-        window.addEventListener("DOMContentLoaded", renderOptions);
-
-        async function generateReview() {
-            const treatment = document.querySelector('input[name="treatment"]:checked');
-            const doctor = document.querySelector('input[name="doctor"]:checked');
-            const selectedExps = Array.from(document.querySelectorAll('input[name="experience"]:checked')).map(cb => cb.value);
-
-            if (!treatment || !doctor || selectedExps.length === 0) {
-                alert("Please select a treatment, a doctor, and at least one experience item.");
-                return;
-            }
-
-            const btn = document.getElementById('generateBtn');
-            btn.innerText = "Generating...";
-            btn.disabled = true;
-            btn.classList.add("opacity-75", "cursor-not-allowed");
-
-            try {
-                const response = await fetch(BACKEND_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        treatment: treatment.value,
-                        doctor: doctor.value,
-                        experience: selectedExps
-                    })
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.detail || `Backend request failed (${response.status})`);
-                }
-
-                const data = await response.json();
-                document.getElementById('reviewText').value = data.review;
-                document.getElementById('outputSection').classList.remove('hidden');
-            } catch (error) {
-                alert(`Failed to generate review: ${error.message}`);
-                console.error(error);
-            } finally {
-                btn.innerText = "Generate Review";
-                btn.disabled = false;
-                btn.classList.remove("opacity-75", "cursor-not-allowed");
-            }
-        }
-
-        async function copyAndRedirect(event) {
-            const reviewText = document.getElementById('reviewText').value.trim();
-            if (!reviewText) return;
-
-            const btn = event.currentTarget;
-            btn.disabled = true;
-            btn.innerText = "Copying...";
-
-            let clipboardWrite;
-            try {
-                if (navigator.clipboard && window.isSecureContext) {
-                    clipboardWrite = navigator.clipboard.writeText(reviewText);
-                }
-            } catch (error) {
-                console.error("Clipboard API failed:", error);
-            }
-
-            let fallbackCopied = false;
-            try {
-                fallbackCopied = copyTextFallback(reviewText);
-            } catch (error) {
-                console.error("Clipboard fallback failed:", error);
-            }
-
-            if (clipboardWrite) {
-                try {
-                    await clipboardWrite;
-                } catch (error) {
-                    if (!fallbackCopied) {
-                        console.error("Clipboard API failed:", error);
-                        alert("Could not copy the review. Please copy it manually, then try again.");
-                        btn.disabled = false;
-                        btn.innerText = "Copy and Redirect";
-                        return;
-                    }
-                }
-            } else if (!fallbackCopied) {
-                alert("Could not copy the review. Please copy it manually, then try again.");
-                btn.disabled = false;
-                btn.innerText = "Copy and Redirect";
-                return;
-            }
-
-            btn.innerText = "Copied! Redirecting...";
-            window.location.assign(REDIRECT_URL);
-        }
-
-        function copyTextFallback(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.setAttribute("readonly", "");
-            textArea.style.position = "fixed";
-            textArea.style.opacity = "0";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-
-            try {
-                return document.execCommand("copy");
-            } finally {
-                textArea.remove();
-            }
-        }
-    </script>
+<body>
+  <header class="site-header" aria-label="Beyond Dental">
+    <div class="brand"><div class="brand-name">Beyond Dental</div><div class="brand-rule"></div><div class="brand-tag">DENTOFACIAL AESTHETICS AND IMPLANT CENTER</div></div>
+  </header>
+  <main>
+    <section class="form-view" id="formView">
+      <div class="intro"><p class="eyebrow">Vasanth Nagar • Bengaluru</p><h1>Share Your Experience</h1><p class="intro-copy">Answer three quick questions and we'll write a heartfelt review for you, ready to post.</p></div>
+      <div class="progress-head"><span>PROGRESS</span><span class="progress-count" id="progressCount">0 of 3 Completed</span></div><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <section class="question"><h2><span class="number">1</span> What treatment did you take?</h2><div class="choice-grid" id="treatments-container"></div></section>
+      <section class="question"><h2><span class="number">2</span> Which doctor did you consult?</h2><div class="choice-grid doctors" id="doctors-container"></div></section>
+      <section class="question"><h2><span class="number">3</span> How was your experience?</h2><p class="helper">(Select all that apply)</p><div class="experiences" id="experiences-container"></div></section>
+      <div class="action-row"><button id="generateBtn" class="primary" onclick="generateReview()">Generate Review&nbsp; →</button><span class="action-note">Answer all 3 to continue</span></div>
+    </section>
+    <section class="result" id="resultView" aria-live="polite">
+      <h1>Thank you!</h1>
+      <div class="summary"><p class="summary-row"><span class="summary-label">TREATMENT</span><span class="summary-value" id="summaryTreatment"></span></p><p class="summary-row"><span class="summary-label">DOCTOR</span><span class="summary-value" id="summaryDoctor"></span></p><div class="stamp"><span>THANK</span><span>YOU</span><span>★★★★★</span></div></div>
+      <div class="selected-tags" id="selectedTags"></div>
+      <article class="review-card"><p class="stars" aria-label="5 stars">★★★★★</p><p class="review-copy" id="reviewCopy"></p></article>
+      <button class="primary publish" onclick="copyAndRedirect(event)">Publish Review</button>
+    </section>
+  </main>
+  <script>
+    const BACKEND_URL = window.location.protocol === "file:" ? "https://review-gen-g6cw.onrender.com/generate-review" : "/generate-review";
+    const REDIRECT_URL = "https://share.google/E7oSDf65O4AwMDyOp";
+    const treatments=["Dental Implants","Root Canal","Tooth Extraction","General Checkup","Teeth Whitening","Orthodontics"];
+    const doctors=["Dr. Iyer","Dr. Singh","Dr. Sharma","Dr. Patel","Dr. Rao","Dr. Reddy"];
+    const experiences=["Clear expectations","Clean environment","Painless treatment","Friendly staff","Modern equipment","Great follow-up","Highly recommended","Affordable pricing","Gentle approach"];
+    const initials={"Dr. Iyer":"IY","Dr. Singh":"SI","Dr. Sharma":"SH","Dr. Patel":"PA","Dr. Rao":"RA","Dr. Reddy":"RE"};
+    function renderOptions(){
+      document.getElementById('treatments-container').innerHTML=treatments.map((v,i)=>`<label class="choice"><input type="radio" name="treatment" value="${v}"><span class="indicator"></span><span class="choice-name">${v}</span></label>`).join('');
+      document.getElementById('doctors-container').innerHTML=doctors.map(v=>`<label class="choice"><input type="radio" name="doctor" value="${v}"><span class="doctor-initials">${initials[v]}</span><span class="choice-name">${v}</span></label>`).join('');
+      document.getElementById('experiences-container').innerHTML=experiences.map(v=>`<label class="choice"><input type="checkbox" name="experience" value="${v}"><span class="indicator"></span><span class="choice-name">${v}</span></label>`).join('');
+      document.querySelectorAll('input').forEach(el=>el.addEventListener('change',updateProgress));updateProgress();
+    }
+    function updateProgress(){const count=Number(!!document.querySelector('[name="treatment"]:checked'))+Number(!!document.querySelector('[name="doctor"]:checked'))+Number(!!document.querySelector('[name="experience"]:checked'));document.getElementById('progressCount').textContent=`${count} of 3 Completed`;document.getElementById('progressFill').style.width=`${count*33.333}%`}
+    window.addEventListener('DOMContentLoaded',renderOptions);
+    async function generateReview(){
+      const treatment=document.querySelector('[name="treatment"]:checked'),doctor=document.querySelector('[name="doctor"]:checked'),selectedExps=Array.from(document.querySelectorAll('[name="experience"]:checked')).map(x=>x.value);
+      if(!treatment||!doctor||!selectedExps.length){alert('Please select a treatment, a doctor, and at least one experience item.');return}
+      const btn=document.getElementById('generateBtn');btn.disabled=true;btn.textContent='Writing your review…';
+      try{const response=await fetch(BACKEND_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({treatment:treatment.value,doctor:doctor.value,experience:selectedExps})});if(!response.ok){const errorData=await response.json();throw new Error(errorData.detail||`Backend request failed (${response.status})`)}const data=await response.json();
+        document.getElementById('summaryTreatment').textContent=treatment.value;document.getElementById('summaryDoctor').textContent=doctor.value;document.getElementById('reviewCopy').textContent=data.review;document.getElementById('selectedTags').innerHTML=selectedExps.map(v=>`<span class="tag">${v}</span>`).join('');document.getElementById('formView').classList.add('hide');document.getElementById('resultView').classList.add('show');window.scrollTo({top:0,behavior:'smooth'});
+      }catch(error){alert(`Failed to generate review: ${error.message}`);console.error(error)}finally{btn.disabled=false;btn.innerHTML='Generate Review&nbsp; →'}
+    }
+    async function copyAndRedirect(event){const text=document.getElementById('reviewCopy').textContent.trim();if(!text)return;const btn=event.currentTarget;btn.disabled=true;btn.textContent='Copying…';let copied=false;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text);copied=true}}catch(e){console.error(e)}if(!copied){try{copied=copyTextFallback(text)}catch(e){console.error(e)}}if(!copied){alert('Could not copy the review. Please copy it manually, then try again.');btn.disabled=false;btn.textContent='Publish Review';return}btn.textContent='Copied! Redirecting…';window.location.assign(REDIRECT_URL)}
+    function copyTextFallback(text){const area=document.createElement('textarea');area.value=text;area.setAttribute('readonly','');area.style.position='fixed';area.style.opacity='0';document.body.appendChild(area);area.select();try{return document.execCommand('copy')}finally{area.remove()}}
+  </script>
 </body>
 </html>
