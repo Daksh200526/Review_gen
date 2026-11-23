@@ -45,7 +45,8 @@ async def generate_review(data: ReviewData):
         "Use plain, everyday English and short, clear sentences. Keep the tone warm and honest, like a simple message to a friend. "
         "Avoid slang, fancy or formal words, idioms, marketing language, exaggerated praise, generic filler, and overly polished wording. "
         "Only mention details supported by the treatment, doctor, and selected experience points. Do not invent events, results, feelings, or claims. "
-        "Include Vasanth Nagar in every review in a natural, unforced way. Mention the dentist by name naturally. "
+        f"STRICT REQUIREMENTS: Include the exact location text 'Vasanth Nagar' in every review. Include the exact phrase 'dentist {data.doctor}' (with dentist immediately before the doctor's name) in every review. "
+        "These two exact text requirements are mandatory. Work them naturally into the review and do not omit, reword, or separate them. "
         "Write 2 or 3 concise sentences. Do not use quotation marks, a heading, or a preamble; return only the review."
         "Instead of term Orthodontics include other words like teeth alignment, braces, teeth straightening, dental alignment, smile correction, dental braces, teeth adjustment, dental correction, smile enhancement, teeth positioning, dental realignment, smile improvement, teeth reshaping, bite correction, teeth alignment treatment."
         "Instead of term Dental Implants include other words like tooth replacement, artificial teeth, tooth restoration, dental fixtures, tooth implants, dental reconstruction, tooth support, dental restoration, oral prosthetics."
@@ -87,4 +88,12 @@ async def generate_review(data: ReviewData):
     if not isinstance(review_text, str) or not review_text.strip():
         raise HTTPException(status_code=502, detail="OpenAI returned an empty review.")
 
-    return {"review": review_text.strip()}
+    review_text = review_text.strip()
+    # Enforce required clinic details even if the model misses a prompt constraint.
+    if "Vasanth Nagar" not in review_text:
+        review_text = f"{review_text} The clinic is in Vasanth Nagar."
+    required_doctor_phrase = f"dentist {data.doctor}"
+    if required_doctor_phrase.casefold() not in review_text.casefold():
+        review_text = f"{review_text} I met dentist {data.doctor}."
+
+    return {"review": review_text}
