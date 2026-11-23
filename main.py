@@ -37,14 +37,14 @@ async def generate_review(data: ReviewData):
         raise HTTPException(status_code=503, detail="OpenAI API key is not configured on the server.")
 
     prompt = (
-        "Draft a short first-person review in a warm, conversational voice, based only on the patient's answers. "
-        f"They had {data.treatment} with {data.doctor}. "
-        f"They selected these parts of their experience: {', '.join(data.experience)}. "
-        "Sound like a real person sharing a straightforward personal impression: use everyday wording, "
-        "Do not invent events, outcomes, feelings, or details that were not provided, and avoid generic promotional claims. "
-        "Use correct, readable grammar, don't use high-end English, use simple relatable language; do not add deliberate mistakes. "
-        "Write 2 to 4 concise sentences. Do not use quotation marks, placeholders, or a preamble; provide only the review text."
-        "Mention the clinic location Vasanth Nagar to be placed in reviews and the way it is placed in the review should be very natural, realistic, highly trustworthy and should not feel forced. "
+        "Write a short, first-person review that sounds like an ordinary person speaking naturally. "
+        f"The patient had {data.treatment} with {data.doctor} at Beyond Dental in Vasanth Nagar. "
+        f"The patient chose these experience points: {', '.join(data.experience)}. "
+        "Use plain, everyday English and short, clear sentences. Keep the tone warm and honest, like a simple message to a friend. "
+        "Avoid slang, fancy or formal words, idioms, marketing language, exaggerated praise, and generic filler. "
+        "Only mention details supported by the treatment, doctor, and selected experience points. Do not invent events, results, feelings, or claims. "
+        "Mention the term dentist before the doctor name in the reviews, and mention Vasanth Nagar only if it fits naturally. "
+        "Write 2 or 3 concise sentences. Do not use quotation marks, a heading, or a preamble; return only the review."
     )
 
     url = "https://api.openai.com/v1/chat/completions"
@@ -52,7 +52,7 @@ async def generate_review(data: ReviewData):
     payload = {
         "model": "gpt-4o-mini",
         "messages": [
-            {"role": "system", "content": "You help people express their own clinic experiences clearly and naturally. Keep every review grounded in the details they supplied."},
+            {"role": "system", "content": "Help people express their own experience in plain, natural English. Sound conversational and sincere. Do not add facts or embellish their experience."},
             {"role": "user", "content": prompt}
         ],
         "temperature": 0.7,
