@@ -41,7 +41,6 @@ async def generate_review(data: ReviewData):
         f"They had {data.treatment} with {data.doctor}. "
         f"They selected these parts of their experience: {', '.join(data.experience)}. "
         "Sound like a real person sharing a straightforward personal impression: use everyday wording, "
-        "a natural rhythm, and vary the phrasing and sentence structure between reviews. "
         "Do not invent events, outcomes, feelings, or details that were not provided, and avoid generic promotional claims. "
         "Use correct, readable grammar, don't use high-end English, use simple relatable language; do not add deliberate mistakes. "
         "Write 2 to 4 concise sentences. Do not use quotation marks, placeholders, or a preamble; provide only the review text."
