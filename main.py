@@ -47,6 +47,8 @@ async def generate_review(data: ReviewData):
         "Only mention details supported by the treatment, doctor, and selected experience points. Do not invent events, results, feelings, or claims. "
         "Include Vasanth Nagar in every review in a natural, unforced way. Mention the dentist by name naturally. "
         "Write 2 or 3 concise sentences. Do not use quotation marks, a heading, or a preamble; return only the review."
+        "Instead of term Orthodontics include other words like teeth alignment, braces, teeth straightening, dental alignment, smile correction, dental braces, teeth adjustment, dental correction, smile enhancement, teeth positioning, dental realignment, smile improvement, teeth reshaping, bite correction, teeth alignment treatment."
+        "Instead of term Dental Implants include other words like tooth replacement, artificial teeth, tooth restoration, dental fixtures, tooth implants, dental reconstruction, tooth support, dental restoration, oral prosthetics."
     )
 
     url = "https://api.openai.com/v1/chat/completions"
